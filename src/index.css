@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #F7F8FC;
+  --shadow-neumorphic: 8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff;
+  --shadow-neumorphic-sm: 4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff;
+  --shadow-neumorphic-inset: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+}
+
+body {
+  background-color: var(--color-background);
+}
