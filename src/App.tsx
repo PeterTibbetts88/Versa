@@ -48,6 +48,7 @@ export default function App() {
   const [sessionInfo, setSessionInfo] = useState<{ title: string; summary: string } | null>(null);
   const [history, setHistory] = useState<SavedSession[]>([]);
   const [attachment, setAttachment] = useState<Attachment | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [chatInput, setChatInput] = useState('');
   
@@ -98,6 +99,7 @@ export default function App() {
     if (!decision.trim()) return;
 
     setLoading(true);
+    setError(null);
     try {
       const analysis = await startAnalysis(decision, attachment || undefined);
       
@@ -121,8 +123,9 @@ export default function App() {
       setHistory(prev => [newSaved, ...prev].slice(0, 10));
       setAttachment(null);
       setDecision('');
-    } catch (error) {
-      console.error('Analysis failed:', error);
+    } catch (err: any) {
+      console.error('Analysis failed:', err);
+      setError(err.message || 'Something went wrong. Please check your API key and connection.');
     } finally {
       setLoading(false);
     }
@@ -139,12 +142,14 @@ export default function App() {
     setChatInput('');
     setAttachment(null);
     setLoading(true);
+    setError(null);
 
     try {
       const response = await sendChatMessage(updatedMessages, chatInput, attachment || undefined);
       setMessages(prev => [...prev, { role: 'model', text: response }]);
-    } catch (error) {
-      console.error('Chat failed:', error);
+    } catch (err: any) {
+      console.error('Chat failed:', err);
+      setError(err.message || 'Something went wrong. Please check your API key and connection.');
     } finally {
       setLoading(false);
     }
@@ -368,6 +373,17 @@ export default function App() {
                   </AnimatePresence>
                   <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*,.pdf,.doc,.docx,.txt" />
                 </div>
+
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-xs font-medium"
+                  >
+                    <XCircle className="w-4 h-4 flex-shrink-0" />
+                    <p>{error}</p>
+                  </motion.div>
+                )}
 
                 <button
                   type="submit"

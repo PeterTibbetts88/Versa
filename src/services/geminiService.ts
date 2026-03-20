@@ -1,6 +1,12 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Gemini API Key is missing. Please set GEMINI_API_KEY in your environment variables.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export interface Message {
   role: 'user' | 'model';
@@ -64,6 +70,7 @@ export async function startAnalysis(
     });
   }
 
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: { parts },
@@ -90,6 +97,7 @@ export async function sendChatMessage(
   newMessage: string,
   attachment?: Attachment
 ): Promise<string> {
+  const ai = getAI();
   const chat = ai.chats.create({
     model: "gemini-3-flash-preview",
     config: {
