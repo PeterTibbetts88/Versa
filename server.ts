@@ -84,7 +84,7 @@ async function startServer() {
         },
       });
 
-      res.json(JSON.parse(response.text));
+      res.status(200).json(JSON.parse(response.text));
     } catch (error: any) {
       console.error("Analysis API Error:", error);
       res.status(500).json({ error: error.message });
@@ -121,7 +121,7 @@ async function startServer() {
         message: parts
       });
 
-      res.json({ text: response.text });
+      res.status(200).json({ text: response.text });
     } catch (error: any) {
       console.error("Chat API Error:", error);
       res.status(500).json({ error: error.message });
